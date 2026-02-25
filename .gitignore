@@ -1,0 +1,7 @@
+/.ralph
+*.backup
+*.log
+*.log
+.DS_Store
+/__pycache__
+*.log
