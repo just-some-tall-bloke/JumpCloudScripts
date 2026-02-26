@@ -1,5 +1,3 @@
-# Licensed under CC BY-NC-SA 4.0
-# https://creativecommons.org/licenses/by-nc-sa/4.0/
 # JumpCloud macOS Version Compliance
 
 Manages JumpCloud device groups for macOS version compliance tracking.
@@ -37,8 +35,16 @@ export JUMPCLOUD_API_KEY='your_api_key_here'
 ```
 
 2. Run the script:
+
+**Python:**
 ```bash
-python3 outdated-macs.py
+python3 version-compliance.py
+```
+
+**PowerShell:**
+```powershell
+$env:JUMPCLOUD_API_KEY='your_api_key_here'
+.\version-compliance.ps1
 ```
 
 3. Follow the prompts to:

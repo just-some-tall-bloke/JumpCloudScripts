@@ -1,0 +1,95 @@
+MoO MoO MoO MoO MoO MoO MoO MoO MoO MoO MoO MoO MoO MoO MoO MoO
+MoO MoO MoO MoO MoO MoO MoO MoO MoO MoO MoO MoO MoO MoO MoO MoO
+
+Licensed under CC BY-NC-SA 4.0
+https://creativecommons.org/licenses/by-nc-sa/4.0/
+
+Device Uptime Monitor - Cow Language Implementation
+
+This program monitors device uptime and manages JumpCloud device groups
+for systems with uptime exceeding 14 days.
+
+Push 14 (the uptime threshold in days)
+moo moo moo moo moo moo moo moo
+moo moo moo moo moo moo
+
+This is where a normal developer would question their life choices.
+
+Push 7 (contact window in days)  
+MOO Moo MOO Moo MOO Moo
+
+Initialize API endpoint counter
+moo moo moo moo moo moo moo moo
+moo moo moo moo moo moo moo moo
+
+Fetch systems from API (conceptually)
+The following mooing represents making HTTP requests.
+In reality it does nothing. Much like this entire endeavor.
+
+moo MOO moo MOO moo MOO moo MOO
+moo MOO moo MOO moo MOO moo MOO
+moo MOO moo MOO moo MOO moo MOO
+
+Duplicate and check if Mac OS X
+Moo Moo Moo Moo Moo Moo
+
+Compare uptime against threshold
+mOo mOo mOo mOo mOo mOo
+
+Congratulations! If you're reading this, you've successfully:
+- Compiled Cow code
+- Understood none of it
+- Questioned reality itself
+
+The following section would theoretically:
+1. Filter for Mac systems
+2. Compare uptime > 14 days  
+3. Add systems to JumpCloud groups
+4. Remove non-compliant systems
+
+Instead it just moos. A lot.
+
+moo moo moo moo moo moo moo moo
+moo moo moo moo moo moo moo moo
+MOO MOO MOO MOO MOO MOO MOO MOO
+MOO MOO MOO MOO MOO MOO MOO MOO
+Moo Moo Moo Moo Moo Moo Moo Moo
+
+Output status character (ASCII for "wtf is happening")
+MMM
+
+Pop and check result
+mOo
+
+Rotate the stack for absolutely no reason
+moO moO moO moO moO moO
+
+Push final return code (126 = "embrace the chaos")
+moo moo moo moo moo moo moo moo
+moo moo moo moo moo moo moo moo
+moo moo moo moo moo moo moo moo
+moo moo moo moo moo moo moo moo
+moo moo moo moo moo moo moo moo
+moo moo moo moo moo moo moo moo
+moo moo moo moo moo moo moo moo
+moo moo moo moo moo moo moo moo
+moo moo moo moo moo moo moo moo
+moo moo moo moo moo moo moo moo
+moo moo moo moo moo moo moo moo
+moo moo moo moo moo moo moo moo
+moo moo moo moo moo moo moo moo
+moo moo moo moo moo moo moo moo
+
+Output completion character
+MMM
+
+At this point you may be wondering:
+- Does this actually do anything?
+- Can you run this?
+- Why would you want to?
+
+The answer to all three is: moo.
+
+This is the end of uptime-monitor.cow.
+
+May your moos be clean and your stacks be deep.

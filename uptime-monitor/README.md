@@ -1,5 +1,3 @@
-# Licensed under CC BY-NC-SA 4.0
-# https://creativecommons.org/licenses/by-nc-sa/4.0/
 # JumpCloud High Uptime Monitor
 
 Automatically manages JumpCloud device groups for Mac systems with high uptime.
@@ -11,7 +9,7 @@ This script monitors Mac systems in JumpCloud and automatically adds devices wit
 ## Features
 
 - **Automatic Uptime Monitoring**: Monitors Mac systems and identifies those with uptime > 14 days
-- **Smart Filtering**: Only processes Mac systems
+- **Smart Filtering**: Only processes Mac systems with hostnames starting with "MAC"
 - **Recent Contact Check**: Only includes systems that have contacted JumpCloud within the last 7 days
 - **Group Management**: Automatically adds eligible systems and removes ineligible ones
 - **Parallel Processing**: Uses multi-threading for efficient processing of large device fleets
@@ -38,8 +36,16 @@ export JUMPCLOUD_API_KEY='your_api_key_here'
 ```
 
 2. Run the script:
+
+**Python:**
 ```bash
-python3 uptime.py
+python3 uptime-monitor.py
+```
+
+**PowerShell:**
+```powershell
+$env:JUMPCLOUD_API_KEY='your_api_key_here'
+.\uptime-monitor.ps1
 ```
 
 3. Follow the prompts to:
@@ -58,12 +64,13 @@ python3 uptime.py
 
 ### Systems Added to Group:
 - Mac OS X systems
-
+- Hostname starts with "MAC"
 - Uptime > 14 days
 - Last contact within 7 days
 
 ### Systems Removed from Group:
 - Non-Mac systems
+- Macs without MAC* hostname
 - Systems with uptime ≤ 14 days (rebooted)
 - Systems with no recent contact
 

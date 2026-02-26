@@ -1,5 +1,3 @@
-# Licensed under CC BY-NC-SA 4.0
-# https://creativecommons.org/licenses/by-nc-sa/4.0/
 # JumpCloud Duplicate System Remover
 
 Identifies and removes duplicate JumpCloud system entries based on serial numbers.
@@ -14,9 +12,11 @@ This script scans your JumpCloud environment for systems with duplicate serial n
 - **Intelligent Selection**: Keeps the system with the most recent lastContact timestamp
 - **Safe by Default**: Runs in DRY_RUN mode to preview actions before execution
 - **Colored Output**: Provides clear, color-coded feedback and progress indicators
-- **Comprehensive Logging**: Logs all actions to both console and file (`delete_dupes.log`)
+- **Comprehensive Logging**: Logs all actions to both console and file (`duplicate-remover.log`)
 - **Rate Limiting**: Implements delays to avoid API throttling
 - **Progress Tracking**: Shows progress bars for system fetching and processing
+- **Selection Logic**: Keeps the most recently contacted device for each serial number
+- **Confirmation Required**: No automatic deletion in dry run mode
 
 ## Requirements
 
@@ -37,20 +37,29 @@ pip install -r requirements.txt
 ### Dry Run (Recommended First)
 ```bash
 export JUMPCLOUD_API_KEY='your_api_key_here'
-python3 delete_dupes.py
+python3 duplicate-remover.py
 ```
 
-### Live Deletion
-Edit the script to set `DRY_RUN = False` (line 31), then:
+### Live Deletion (Enable Deletion)
+
+**Python:**
+Use the `--delete` flag:
 ```bash
-python3 delete_dupes.py
+python3 duplicate-remover.py --delete
+```
+
+**PowerShell:**
+Use the `-Delete` switch:
+```powershell
+$env:JUMPCLOUD_API_KEY='your_api_key_here'
+.\duplicate-remover.ps1 -Delete
 ```
 
 ## Configuration
 
-- **DRY_RUN**: Set to `True` for preview mode, `False` for actual deletion
+- **Dry Run**: Enabled by default. Run without flags to preview actions.
 - **RATE_LIMIT_DELAY**: Seconds between API calls (default: 0.1)
-- **LOG_FILE**: Output file for detailed logging (default: `delete_dupes.log`)
+- **LOG_FILE**: Output file for detailed logging (default: `duplicate-remover.log`)
 
 ## What It Does
 
@@ -93,7 +102,7 @@ WARNING: This is permanent. Deleting devices...
 
 ## Log File
 
-All actions are logged to `delete_dupes.log` with timestamps and detail levels:
+All actions are logged to `duplicate-remover.log` with timestamps and detail levels:
 - INFO: Normal operations
 - WARNING: Important notices
 - ERROR: Failed operations
@@ -107,6 +116,6 @@ All actions are logged to `delete_dupes.log` with timestamps and detail levels:
 
 ## Important Notes
 
-⚠️ **WARNING**: When `DRY_RUN = False`, this script permanently deletes systems from JumpCloud. Always run in dry run mode first and review the output carefully.
+⚠️ **WARNING**: When using the deletion flag, this script permanently deletes systems from JumpCloud. Always run in dry run mode first and review the output carefully.
 
-💡 **Best Practice**: Run with `DRY_RUN = True` and review the log file to understand what will be deleted before enabling live mode.
+💡 **Best Practice**: Run without the deletion flag first and review the log file to understand what will be deleted before enabling live mode.

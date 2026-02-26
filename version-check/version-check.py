@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 # Licensed under CC BY-NC-SA 4.0
 # https://creativecommons.org/licenses/by-nc-sa/4.0/
+
 """
-JumpCloud API Script to export Macs below a specified macOS version with primary user
+API Script to export systems below a specified macOS version with primary user
 Outputs CSV with system details and primary user username
 """
 
@@ -10,25 +11,44 @@ import os
 import sys
 import requests
 import csv
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import List, Dict, Optional, Any
-from tqdm import tqdm
-
 try:
     from colorama import init, Fore, Style
     init(autoreset=True)
-    COLOR_SUCCESS = Fore.GREEN + Style.BRIGHT
-    COLOR_ERROR   = Fore.RED   + Style.BRIGHT
-    COLOR_WARNING = Fore.YELLOW + Style.BRIGHT
-    COLOR_INFO    = Fore.CYAN  + Style.BRIGHT
-    COLOR_RESET   = Style.RESET_ALL
+    HAS_COLOR = True
 except ImportError:
-    COLOR_SUCCESS = COLOR_ERROR = COLOR_WARNING = COLOR_INFO = COLOR_RESET = ""
+    HAS_COLOR = False
+    # Fallback to manual ANSI codes if colorama is not available
+    class _ColorFallback:
+        def __init__(self):
+            self.RED = '\033[91m'
+            self.GREEN = '\033[92m'
+            self.YELLOW = '\033[93m'
+            self.BLUE = '\033[94m'
+            self.MAGENTA = '\033[95m'
+            self.CYAN = '\033[96m'
+            self.WHITE = '\033[97m'
+            self.RESET = '\033[0m'
+    class _StyleFallback:
+        def __init__(self):
+            self.BRIGHT = '\033[1m'
+            self.DIM = '\033[2m'
+            self.NORMAL = '\033[22m'
+            self.RESET_ALL = '\033[0m'
+    Fore = _ColorFallback()
+    Style = _StyleFallback()
 
+# Color constants
+COLOR_SUCCESS = Fore.GREEN + Style.BRIGHT if HAS_COLOR else Fore.GREEN
+COLOR_ERROR = Fore.RED + Style.BRIGHT if HAS_COLOR else Fore.RED
+COLOR_WARNING = Fore.YELLOW + Style.BRIGHT if HAS_COLOR else Fore.YELLOW
+COLOR_INFO = Fore.CYAN + Style.BRIGHT if HAS_COLOR else Fore.CYAN
+COLOR_RESET = Style.RESET_ALL if HAS_COLOR else Style.RESET_ALL
 
 def color_text(text, color):
     """Apply color to text if color support is available."""
-    return f"{color}{text}{COLOR_RESET}"
+    return f"{color}{text}{COLOR_RESET if HAS_COLOR else Style.RESET_ALL}"
 
 
 def get_api_key() -> str:
@@ -166,9 +186,13 @@ def main():
     
     # Filter for Mac systems below target version
     mac_systems_below_target = []
-    cutoff_date = datetime.now() - timedelta(days=days)
+    processed_count = 0
+    cutoff_date = datetime.now(timezone.utc) - timedelta(days=days)
     
-    for system in tqdm(systems, desc="Processing systems", unit="sys"):
+    for system in systems:
+        processed_count += 1
+        print(f"\rProcessing systems: {processed_count} of {len(systems)} ({(processed_count/len(systems)*100):.1f}%)", end='', flush=True)
+        
         # Check if it's a Mac
         if system.get('os') == "Mac OS X":
             # Check version
@@ -184,16 +208,16 @@ def main():
                             continue  # Skip systems not contacted within specified days
                 except (ValueError, AttributeError):
                     continue  # Skip if we can't parse the date
-
+                
                 last_contact_display = last_contact_date.strftime('%Y-%m-%d') if last_contact_date else 'Unknown'
-                tqdm.write(color_text(f"Found Mac below {target_version}: {system.get('hostname')} (v{version}) - Last seen: {last_contact_display}", COLOR_WARNING))
-
+                print(color_text(f"Found Mac below {target_version}: {system.get('hostname')} (v{version}) - Last seen: {last_contact_display}", COLOR_WARNING))
+                
                 # Get primary user username if exists
                 primary_username = ""
                 primary_user_id = system.get('primaryUser', '')
                 if primary_user_id:
                     primary_username = get_user_by_id(api_key, primary_user_id)
-
+                
                 # Create dictionary for CSV
                 system_data = {
                     'Hostname': system.get('hostname', ''),
@@ -207,6 +231,8 @@ def main():
                     'Active': system.get('active', False)
                 }
                 mac_systems_below_target.append(system_data)
+    
+    print()  # New line after progress
     
     if mac_systems_below_target:
         # Export to CSV

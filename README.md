@@ -1,16 +1,17 @@
-# Licensed under CC BY-NC-SA 4.0
-# https://creativecommons.org/licenses/by-nc-sa/4.0/
 # macOS MDM Scripts
 
 ## 📁 Project Organization
 
-This repository has been organized into individual folders for each script/application with dedicated README files:
+This repository has been organized into individual folders for each script with dedicated README files:
 
 ### 🔧 Management Scripts
-- **`uptime-monitor/`** - JumpCloud High Uptime Monitor
-- **`duplicate-remover/`** - JumpCloud Duplicate System Remover  
-- **`version-compliance/`** - JumpCloud macOS Version Compliance
-- **`macos-version-audit/`** - JumpCloud macOS Version Audit Exporter
+- **`uptime-monitor/`** - Device Uptime Monitor
+- **`duplicate-remover/`** - Duplicate System Remover  
+- **`version-compliance/`** - macOS Version Compliance
+- **`version-check/`** - Version Check Exporter
+- **`battery-health/`** - Battery Health Auditor
+- **`network-audit/`** - Network Configuration Audit
+- **`timezone-region-sync/`** - Timezone/Region Sync Auditor
 
 Each folder contains:
 - The main script/application
@@ -29,21 +30,26 @@ Each folder contains:
 
 | Script | Purpose | Language | Folder |
 |--------|---------|----------|---------|
-| **uptime.py** | Monitors Mac uptime >14 days, manages device groups | Python | `uptime-monitor/` |
-| **delete_dupes.py** | Removes duplicate JumpCloud devices by serial | Python | `duplicate-remover/` |
-| **outdated-macs.py** | Manages macOS version compliance groups | Python | `version-compliance/` |
-| **macos-version-audit.ps1** | Exports Mac systems below target version | PowerShell | `macos-version-audit/` |
+| **uptime-monitor.py** / **.ps1** | Monitors device uptime >14 days, manages device groups | Python/PS | `uptime-monitor/` |
+| **duplicate-remover.py** / **.ps1** | Removes duplicate devices by serial | Python/PS | `duplicate-remover/` |
+| **version-compliance.py** / **.ps1** | Manages macOS version compliance groups | Python/PS | `version-compliance/` |
+| **battery-health.py** / **.ps1** | Monitors battery health and cycle count | Python/PS | `battery-health/` |
+| **version-check.py** / **.ps1** | Exports systems below target version | Python/PS | `version-check/` |
+| **network-audit.py** / **.ps1** | Audits network configuration and DNS/proxy settings | Python/PS | `network-audit/` |
+| **timezone-region-sync.py** / **.ps1** | Detects timezone and time sync issues | Python/PS | `timezone-region-sync/` |
 
 ## Requirements
 
 ### Python Scripts
 - Python 3.7+
-- JumpCloud API key (set as `JUMPCLOUD_API_KEY` environment variable)
-- Required packages: See individual script folders for `requirements.txt` files and run `pip install -r requirements.txt`
+- API key (set as `MDM_API_KEY` environment variable)
+- Required packages (shared): `requests`, `colorama`
+- Additional per-script packages: `tqdm` (uptime-monitor), `packaging` (version-compliance)
+- Install via: `pip install -r requirements.txt` in the specific script folder
 
 ### PowerShell Scripts
 - PowerShell 5.1+ or PowerShell Core
-- JumpCloud API key (set as environment variable)
+- API key (set as environment variable)
 
 ## Individual Script Details
 
@@ -53,7 +59,15 @@ For detailed usage instructions, configuration, and troubleshooting for each scr
 - **[uptime-monitor/README.md](uptime-monitor/README.md)** - Complete uptime monitoring documentation
 - **[duplicate-remover/README.md](duplicate-remover/README.md)** - Duplicate removal with safety guidelines  
 - **[version-compliance/README.md](version-compliance/README.md)** - macOS compliance management
-- **[macos-version-audit/README.md](macos-version-audit/README.md)** - Version export and audit reporting
+- **[version-check/README.md](version-check/README.md)** - Version export and reporting
+- **[battery-health/README.md](battery-health/README.md)** - Battery health monitoring and alerts
+- **[network-audit/README.md](network-audit/README.md)** - Network configuration auditing
+- **[timezone-region-sync/README.md](timezone-region-sync/README.md)** - Timezone and NTP synchronization
+
+### 📱 Alert Broadcaster System
+- **[Broadcaster/Broadcaster-Apps-README.md](Broadcaster/Broadcaster-Apps-README.md)** - Complete alert system documentation
+- **[Broadcaster/Alert/](Broadcaster/Alert/)** - Alert sender application (see folder for project files)
+- **[Broadcaster/StatusApp/](Broadcaster/StatusApp/)** - Alert display application (see folder for project files)
 
 Each folder contains:
 - ✅ Main script/application
@@ -64,82 +78,82 @@ Each folder contains:
 - ✅ Safety features and best practices
 
 ---
-A comprehensive collection of scripts and applications for enterprise macOS fleet management using JumpCloud MDM. This repository includes Python scripts, PowerShell utilities, and native macOS applications for compliance automation, device management, and system administration.
+A comprehensive collection of scripts and applications for enterprise macOS fleet management using MDM. This repository includes Python scripts, PowerShell utilities, and native macOS applications for compliance automation, device management, and system administration.
 
 ## 🚀 Quick Start
 
-All scripts require a JumpCloud API key. Set it as an environment variable:
+All scripts require an MDM API key. Set it as an environment variable:
 
 ```bash
 # For bash/zsh
-export JUMPCLOUD_API_KEY='your_api_key_here'
+export MDM_API_KEY='your_api_key_here'
 
 # For PowerShell (Windows)
-$env:JUMPCLOUD_API_KEY = 'your_api_key_here'
+$env:MDM_API_KEY = 'your_api_key_here'
 
 # For persistent PowerShell setting
-[System.Environment]::SetEnvironmentVariable('JUMPCLOUD_API_KEY', 'your_api_key', 'User')
+[System.Environment]::SetEnvironmentVariable('MDM_API_KEY', 'your_api_key', 'User')
 ```
 
 ## 📋 Scripts & Applications
 
 ### 🐍 Python Scripts
 
-#### 1. `outdated-macs.py` - macOS Version Compliance Management
+#### 1. `version-compliance.py` - macOS Version Compliance Management
 **Purpose**: Automatically manage device groups for macOS version compliance
 
 **Features**:
-- Scans ALL Mac systems in your JumpCloud organization
-- Adds non-compliant Macs (below target version) to specified device groups
-- Removes compliant Macs that have been upgraded from compliance groups
-- Automatically renames groups to match target version (e.g., "Macs below 15.7.1")
+- Scans ALL systems in your MDM organization
+- Adds non-compliant systems (below target version) to specified device groups
+- Removes compliant systems that have been upgraded from compliance groups
+- Automatically renames groups to match target version (e.g., "Systems below 15.7.1")
 - Interactive confirmation before making changes
 
 **Usage**:
 ```bash
-python3 outdated-macs.py
+python3 version-compliance.py
 ```
 
 **What it asks for**:
-- **Target Group ID**: The alphanumeric ID from the JumpCloud web console URL
+- **Target Group ID**: The alphanumeric ID from the MDM web console URL
 - **Target macOS version**: e.g., `15.7.1`
 
 **Workflow**:
 1. Validates current group name vs. suggested format
 2. Offers to rename group if needed
-3. Shows which Macs will be added/removed
+3. Shows which systems will be added/removed
 4. Requires separate confirmation for additions and removals
 5. Executes changes with detailed logging
 
-#### 2. `delete_dupes.py` - Duplicate Device Cleanup
+#### 2. `duplicate-remover.py` - Duplicate Device Cleanup
 **Purpose**: Identifies and removes duplicate devices based on serial numbers
 
 **Features**:
-- Scans entire JumpCloud organization for duplicate serial numbers
+- Scans entire MDM organization for duplicate serial numbers
 - Keeps the most recently contacted device in each duplicate set
 - Dry-run mode enabled by default for safety
 - Real-time progress tracking with colored console output
-- Comprehensive logging to `delete_dupes.log`
+- Comprehensive logging to `duplicate-remover.log`
 - Works with ALL device types (macOS, Windows, Linux, mobile)
 - Built-in rate limiting to respect API limits
 - Graceful handling of missing/invalid serial numbers and timestamps
 
 **Safety Features**:
-- **DRY_RUN = True** by default - no actual deletions occur
-- Clear logging shows exactly which devices will be kept/deleted
-- Rate limiting prevents API throttling
-- Comprehensive error handling
+- **Dry-run by default**: No deletions occur unless explicitly requested
+- **Manual confirmation**: Required even when deletion is enabled
+- **Clear logging**: Shows exactly which devices would be kept/deleted
+- **Rate limiting**: Prevents API throttling
 
 **Usage**:
 ```bash
-# Dry run (recommended first)
-python3 delete_dupes.py
+# Dry run (default)
+python3 duplicate-remover.py
 
-# Edit script to set DRY_RUN = False, then:
-python3 delete_dupes.py
+# Live deletion
+python3 duplicate-remover.py --delete
 ```
 
-#### 3. `macos-version-audit.py` - macOS Version Audit Reporting
+#### 3. `version-check.py` - macOS Version Reporting
 **Purpose**: Export detailed reports of Mac systems below specified macOS versions
 
 **Features**:
@@ -151,7 +165,7 @@ python3 delete_dupes.py
 
 **Usage**:
 ```bash
-python3 macos-version-audit.py
+python3 version-check.py
 ```
 
 **Output**: CSV file with columns:
@@ -159,10 +173,68 @@ python3 macos-version-audit.py
 - PrimaryUsername, PrimaryUserID, SystemID
 - LastContact, Active status
 
+#### 4. `battery-health.py` - MacBook Battery Health Auditor
+**Purpose**: Identify MacBooks with degraded batteries and manage hardware refresh
+
+**Features**:
+- Cycle count monitoring (default threshold: 1000)
+- Health percentage and OS-reported battery condition
+- Automatic group management for high-cycle systems
+- CSV export for capacity planning
+- Broadcaster integration for user alerts
+- Dry-run mode by default (read-only)
+
+**Usage**:
+```bash
+# Dry run (preview only)
+python3 battery-health.py
+
+# With group management
+python3 battery-health.py --group <group_id>
+```
+
+#### 5. `network-audit.py` - Network Configuration Audit
+**Purpose**: Detect unusual network setups and audit DNS, proxy, and VPN configurations
+
+**Features**:
+- DNS configuration auditing (detects custom/non-standard settings)
+- Proxy detection and reporting
+- VPN connection monitoring
+- Network interface listing
+- CSV export for comprehensive reporting
+- Colorized console output with status indicators
+- Real-time progress tracking
+
+**Usage**:
+```bash
+python3 network-audit.py
+```
+
+#### 6. `timezone-region-sync.py` - Timezone/Region Sync Auditor
+**Purpose**: Ensure fleet consistency by auditing timezone and NTP synchronization settings
+
+**Features**:
+- Automatic timezone detection
+- Clock drift analysis against NTP servers
+- Identification of non-compliant systems
+- Dry-run mode for preview
+- Group management for systems with issues
+- Broadcaster integration for user alerts
+- CSV export for auditing
+
+**Usage**:
+```bash
+# Dry run (preview only)
+python3 timezone-region-sync.py
+
+# With group management
+python3 timezone-region-sync.py --group <group_id>
+```
+
 ### 📟 PowerShell Script
 
-#### `macos-version-audit.ps1` - Windows-Compatible Version Audit Reporting
-**Purpose**: PowerShell equivalent of `macos-version-audit.py` for Windows environments
+#### `version-check.ps1` - Windows-Compatible Version Reporting
+**Purpose**: PowerShell equivalent of `version-check.py` for Windows environments
 
 **Features**:
 - Same functionality as Python version but native PowerShell
@@ -176,7 +248,7 @@ python3 macos-version-audit.py
 $env:JUMPCLOUD_API_KEY = 'your_api_key_here'
 
 # Run script
-.\macos-version-audit.ps1
+.\version-check.ps1
 ```
 
 **Output**: Creates CSV file with same format as Python version
@@ -240,7 +312,8 @@ This repository contains scripts and applications for JumpCloud MDM management. 
 For issues with:
 - **JumpCloud API**: Contact JumpCloud support
 - **Script functionality**: Open an issue in this repository
+- **macOS applications**: Check Xcode build logs and console output
 
 ---
 
-⚡ **Pro Tip**: Start with `macos-version-audit.py` or `macos-version-audit.ps1` to understand your current fleet status before making changes with compliance or cleanup scripts.
+⚡ **Pro Tip**: Start with `version-check.py` or `version-check.ps1` to understand your current fleet status before making changes with compliance or cleanup scripts.

@@ -1,7 +1,7 @@
 # Licensed under CC BY-NC-SA 4.0
 # https://creativecommons.org/licenses/by-nc-sa/4.0/
 
-# JumpCloud API Script to export Macs below a specified macOS version with primary user
+# API Script to export systems below a specified macOS version with primary user
 # Outputs CSV with system details and primary user username
 
 # Get API key from environment variable
@@ -28,13 +28,7 @@ if ([string]::IsNullOrEmpty($daysInput)) {
     Write-Host "Using default: 7 days" -ForegroundColor Yellow
 }
 else {
-    try {
-        $days = [int]$daysInput
-    }
-    catch {
-        Write-Host "Invalid days input, using default: 7 days" -ForegroundColor Red
-        $days = 7
-    }
+    $days = [int]$daysInput
 }
 
 # Output file
@@ -112,35 +106,29 @@ function Compare-MacOSVersion {
         [string]$comparisonVersion
     )
     
-    try {
-        # Parse version strings
-        $v1Parts = $version1.Split('.')
-        $v2Parts = $comparisonVersion.Split('.')
+    # Parse version strings
+    $v1Parts = $version1.Split('.')
+    $v2Parts = $comparisonVersion.Split('.')
+    
+    # Pad arrays to same length
+    $maxLength = [Math]::Max($v1Parts.Length, $v2Parts.Length)
+    
+    for ($i = 0; $i -lt $maxLength; $i++) {
+        $v1Val = if ($i -lt $v1Parts.Length) { [int]$v1Parts[$i] } else { 0 }
+        $v2Val = if ($i -lt $v2Parts.Length) { [int]$v2Parts[$i] } else { 0 }
         
-        # Pad arrays to same length
-        $maxLength = [Math]::Max($v1Parts.Length, $v2Parts.Length)
-        
-        for ($i = 0; $i -lt $maxLength; $i++) {
-            $v1Val = if ($i -lt $v1Parts.Length) { [int]$v1Parts[$i] } else { 0 }
-            $v2Val = if ($i -lt $v2Parts.Length) { [int]$v2Parts[$i] } else { 0 }
-            
-            if ($v1Val -lt $v2Val) {
-                return $true  # version1 is less than target
-            }
-            elseif ($v1Val -gt $v2Val) {
-                return $false  # version1 is greater than target
-            }
+        if ($v1Val -lt $v2Val) {
+            return $true  # version1 is less than target
         }
-        
-        return $false  # versions are equal
+        elseif ($v1Val -gt $v2Val) {
+            return $false  # version1 is greater than target
+        }
     }
-    catch {
-        # If we can't parse the version, assume it doesn't meet criteria
-        return $false
-    }
+    
+    return $false  # versions are equal
 }
 
-Write-Host "Fetching all systems from JumpCloud..." -ForegroundColor Cyan
+Write-Host "Fetching all systems from JumpCloud..." -ForegroundColor Green
 $systems = Get-AllSystems
 
 if ($systems.Count -eq 0) {
@@ -165,12 +153,7 @@ foreach ($system in $systems) {
         if (![string]::IsNullOrEmpty($system.version)) {
             if (Compare-MacOSVersion -version1 $system.version -comparisonVersion $targetVersion) {
                 # Check last contact date (within specified days)
-                try {
-                    $lastContactDate = [DateTime]::Parse($system.lastContact)
-                }
-                catch {
-                    continue  # Skip if we can't parse the date
-                }
+                $lastContactDate = [DateTime]::Parse($system.lastContact)
                 if ($lastContactDate -lt $cutoffDate) {
                     continue  # Skip systems not contacted within specified days
                 }

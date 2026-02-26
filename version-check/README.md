@@ -1,12 +1,10 @@
-# Licensed under CC BY-NC-SA 4.0
-# https://creativecommons.org/licenses/by-nc-sa/4.0/
-# JumpCloud macOS Version Audit
+# JumpCloud Version Check Exporter
 
 Exports Mac systems below a specified macOS version to CSV format with primary user information.
 
 ## Purpose
 
-This PowerShell script exports all Mac systems running below a specified macOS version to a CSV file, including system details and primary user information for compliance tracking and reporting.
+Exports Mac systems running below a specified macOS version to a CSV file, including system details and primary user information for compliance tracking and reporting. Available in both Python and PowerShell versions.
 
 ## Features
 
@@ -19,23 +17,36 @@ This PowerShell script exports all Mac systems running below a specified macOS v
 
 ## Requirements
 
+### PowerShell
 - PowerShell 5.1+ (Windows PowerShell or PowerShell Core)
 - JumpCloud API key (set as environment variable `JUMPCLOUD_API_KEY`)
-- Network connectivity to JumpCloud API
+
+### Python
+- Python 3.6+
+- JumpCloud API key
+- Required packages (install via `pip install -r requirements.txt`)
 
 ## Usage
 
-### Method 1: Set API Key Environment Variable
+### PowerShell
+#### Method 1: Set API Key Environment Variable
 ```powershell
 $env:JUMPCLOUD_API_KEY = 'your_api_key_here'
-.\macos-version-audit.ps1
+.\version-check.ps1
 ```
 
-### Method 2: Persistent Environment Variable
+#### Method 2: Persistent Environment Variable
 ```powershell
 [System.Environment]::SetEnvironmentVariable('JUMPCLOUD_API_KEY', 'your_api_key', 'User')
 # Restart PowerShell, then run:
-.\macos-version-audit.ps1
+.\version-check.ps1
+```
+
+### Python
+```bash
+export JUMPCLOUD_API_KEY='your_api_key_here'
+pip install -r requirements.txt
+python3 version-check.py
 ```
 
 ## Interactive Prompts
